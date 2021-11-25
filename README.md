@@ -1,6 +1,6 @@
 
 ## Scope and Purpose of this Hugo-theme
-This Hugo-theme is **bare-bones minimalistic on purpose**! 
+HugoNoTheme is a **minimalistic, bare-bones theme** for distraction free, uncluttered Hugo-testing and learning-environments! 
 
 Minimalistic does not mean as minimalistic or stripped of as possible, but being reduced to whatever Hugo delivers out of the box (no 3rd-party components or dependencies) but will be required by MOST HugoThemes that might be based on this.
 
@@ -436,3 +436,22 @@ Further the code is using the following variables:
 
 #### Testing
 Once this is setup navigate to the `Link Tests` section and try the liks in teh `Link01` Page.
+
+## Next Steps
+We are going to add features to this base-theme and publish them as separate Theme that will be numbered as follows HugoTheme01, HugoTheme02, ...
+
+----
+
+## INTERNAL STUFF
+<div style="background-color:silver">
+<b>About this README.md (internal stuff)</b>
+</br>
+This README file (must be written in Markdown) serves a double purpose because its content will appear in two places: 
+
+1. On the theme's details page at themes.gohugo.io and
+2. At GitHub (as usual), on your theme's regular main page.
+
+To ease accessibility for international users we have written it in English.
+
+Note: If you add screenshots to the README please make use of absolute file paths instead of relative ones like /images/screenshot.png. Relative paths work great on GitHub but they don't correspond to the directory structure of themes.gohugo.io. Therefore, browsers will not be able to display screenshots on the theme site under the given (relative) path.
+<div>
