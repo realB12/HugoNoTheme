@@ -300,7 +300,6 @@ felis imperdiet proin fermentum leo vel orci porta non. Ut faucibus pulvinar
 elementum integer. Fermentum odio eu feugiat pretium nibh ipsum consequat nisl.
 ```
 
-
 ## Trying it out
 Open a terminal and run the following from the root folder of your site
 
@@ -311,3 +310,129 @@ The `-D` option **includes content with `draft: true` frontmatter-flags**
 Alternatively, edit the front matter of your post and change this line to `draft: false`
 
 Navigate to `http://localhost:1313` to see your site "in action". 
+
+## Fixing the Markdown-Hyperlink Issue
+
+### Testfiles
+
+To illustrate a) the Problem and to b) test the solution, create a `/content/linktest` section-folder and add a [`link01.md`](NoThemeExplore_a/content/linktests/link01.md) and [`link02.md`](NoThemeExplore_a/content/linktests/link01.md) file
+
+with `link01.md` having some hyperlinks defined as as follows: 
+
+```markdown
+---
+title: Link01
+date: '2021-09-01'
+categories:
+  - LinkTest
+tags:
+  - linktest
+---
+
+### Hyperlink/AnkerLink-TestCases
+
+1. [Link02.md](link02.md): Normal `*.md` embedded link
+
+2. [Link02#section02](link02.md#section02): `*.md` embedded link with #Anchor-tag  
+
+3. [#section01](#section01): internal #Anchor-tag
+
+```
+
+in the `link01.md` file create a `## Section01` header and in `link02.md` file create a `## Section02` header for testing "Anchor-links" such as `[link02.md#section01]`.
+
+### The Markdown-Hyperlink-Problem
+When testing the Hugo generated Website (with `hugo server -D`) the hyperlink still navigate to  `*.md` files rather than the generated `*.html`. 
+
+As stange this may seem (what sense does it make not converting the hyperlinks when they target-names are changed?) the Hugo Generator renders Hyperlinkes to other Markup-files from
+
+    [my link](../myLink.md) into 
+
+into
+
+    <a> href="../myLink.md">my link</a>
+
+with the hyperlink still pointing to a Markdown (`*.md`) file,  that has been converted into `*.html` and does not exist any longer in the Hugo-generated website.     
+
+### The Solution 
+
+Find the details about render-hook implementation in the dedicated [Hugo Document upon Goldmark's Render-Hooks](../../../../../../../../../../REPO/work/TOOLS/H/HUGO/GUIDE/HugoRelLinks.md). 
+
+#### Config.toml
+
+Make sure that the `config.toml`'s **`markup`-section** is
+a) **either empty** or (since Version Hugo 0.62 Goldmark is the default Renderer)
+b) set as "goldmark" (not "BlackFriday", for instance)!
+
+#### render-link.html
+Create a `render-link.html` file in:
+
+```plaintext
+└── themes
+    └── NoTheme
+        └── layouts
+            └── _default     // mind the "_" underscore!
+                └── _markup  // mind the "_" underscore!
+                    └── render-link.html
+```
+
+with the following content: 
+
+```html
+<!--
+the urls.Pars Function returns a URL struct 
+For  https://zwbetz.com/make-a-hugo-blog-from-scratch/#wrap-up
+it delivers the following values
+
+Field	       Value
+--------------+-----------------------------------------
+$url.Scheme   | https
+$url.Host	  | zwbetz.com
+$url.Path	  | /make-a-hugo-blog-from-scratch/
+$url.Fragment | wrap-up
+
+Further the code is using the following variables: 
+
+.Destination: 
+   The content of *.md formatted Hyperlink in the rounded bracket [Text](../link.md#section)
+
+-->
+
+{{ $link := .Destination }}
+
+{{ $isRemote := strings.HasPrefix $link "http" }}
+
+{{ if not $isRemote }}
+    {{ $url := urls.Parse .Destination }} 
+    
+    {{ if $url.Path }}
+        <!-- #-Anker handling -->
+        {{ $fragment := "" }}
+
+        {{ with $url.Fragment }}
+            {{ $fragment = printf "#%s" . }}
+        {{ end -}}
+    
+        <!-- Concatenate the given in RelPermalink with the #-Anker-tag -->
+        {{ with .Page.GetPage $url.Path }}
+            <p>RelPermalink = {{ .RelPermalink }}</p>         
+            {{ $link = printf "%s%s" .RelPermalink $fragment }}
+        {{ end }}
+    {{ end }}
+{{ end }}
+
+<a href="{{ $link | safeURL }}"
+    {{ with .Title}}
+        title="{{ . }}"
+    {{ end }}
+
+    {{ if $isRemote }}
+         target="_blank"
+    {{ end }}
+>
+    {{ .Text | safeHTML }}
+</a>
+```
+
+#### Testing
+Once this is setup navigate to the `Link Tests` section and try the liks in teh `Link01` Page.
