@@ -160,3 +160,154 @@ Similarly to what we did above, let’s define the main section
 {{ partial "footer.html" . }}
 
 ```
+
+## Site Configuration
+
+### Theme activation
+Once the template is complete, we tell HUGO to use it with the following `config.toml`-entry: 
+
+    theme = "HugoNoTheme"
+
+### Navigation Menu
+We’ll also need a menu to navigate to the different sections, let’s add it
+
+```toml
+[[menu.main]]
+name = "Home"
+url = ""
+weight = 1
+
+[[menu.main]]
+name = "Link Tests"
+url = "linktests/"
+weight = 2
+
+[[menu.main]]
+name = "Posts"
+url = "posts/"
+weight = 3
+```
+
+Here we are defining a menu, and referencing it with the name `main` to match the `nav`-code in our `header.html` (`.Site.Menus.main`)
+
+
+#### Autonavigation Off
+In Hugo there is another way to create a menu quickly, and that is by adding this line to your `config.toml` file instead: 
+
+    `sectionPagesMenu = "main"`
+
+However we want to be able to customise our `nav`-menu (remember its a theme that is intended for testenvironments), therefore we’ll go with the manual approach. 
+
+## Site Configuration
+
+### Theme activation
+Once the template is complete, we tell HUGO to use it with the following `config.toml`-entry: 
+
+    theme = "HugoNoTheme"
+
+### Navigation Menu
+We’ll also need a menu to navigate to the different sections, let’s add it
+
+```toml
+[[menu.main]]
+name = "Home"
+url = ""
+weight = 1
+
+[[menu.main]]
+name = "Link Tests"
+url = "linktests/"
+weight = 2
+
+[[menu.main]]
+name = "Posts"
+url = "posts/"
+weight = 3
+```
+
+Here we are defining a menu, and referencing it with the name `main` to match the `nav`-code in our `header.html` (`.Site.Menus.main`)
+
+
+#### Autonavigation Off
+In Hugo there is another way to create a menu quickly, and that is by adding this line to your `config.toml` file instead: 
+
+    `sectionPagesMenu = "main"`
+
+However we want to be able to customise our `nav`-menu (remember its a theme that is intended for testenvironments), therefore we’ll go with the manual approach. 
+
+---
+
+## Root-Files
+
+
+### Homepage
+
+create a `/content/_index.md` file and add some content. This will become your homepage that displays the horizontal navigation bar from the header.html and a link to all pages you have put into directly into the /content folder - such as an `about.md` file. 
+
+### Root Files
+Root files are Markdown formatted content-files - such as `/content/about.md` that do not live  in sections (such as posts) but directly in the `/content` folder. 
+
+Links to these root-files will appear at the bottom of the [homepage](#homepage) resp. the `/content/_index.md`-file. 
+
+Mind the the minimal frontmatter here. title is mandatory as this is what is generated for referencing hyperlinks.
+
+```yaml
+---
+title: About
+date: '2021-01-22'
+categories:
+  - About
+tags:
+  - About
+---
+```
+
+## Section Files (posts)
+Sections are files that live in /content-subfolder such as `/content/posts/myPost01.md`. 
+
+Open a terminal and use the following command from the root of your site to create a post
+
+    hugo new posts/myPost01.md
+
+Open the such created `example/content/posts/myPost01.md`
+
+Note here that all required frontmatter was created for you. 
+
+Your own content goes beyond this. 
+
+Hugo automatically takes the first 70 words of your content as its summary and stores it into the `.Summary` variable
+
+Instead, you can manually define where the summary ends with a `<!--more-->` divider
+
+Alternatively, you can add a summary to the front matter if you don’t want your summary to be the beginning of your post. 
+
+The final result should look similar to this
+
+```markdown
+---
+title: "My First Post"
+date: 2020-01-26T23:11:13Z
+draft: true
+---
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+incididunt ut labore et dolore magna aliqua. Pellentesque eu tincidunt tortor 
+aliquam nulla facilisi cras fermentum odio. A erat nam at lectus urna duis. 
+
+<!--more-->
+
+quam quisque id diam vel. Egestas erat imperdiet sed euismod nisi. Scelerisque 
+felis imperdiet proin fermentum leo vel orci porta non. Ut faucibus pulvinar 
+elementum integer. Fermentum odio eu feugiat pretium nibh ipsum consequat nisl.
+```
+
+
+## Trying it out
+Open a terminal and run the following from the root folder of your site
+
+    hugo server -D
+
+The `-D` option **includes content with `draft: true` frontmatter-flags**
+
+Alternatively, edit the front matter of your post and change this line to `draft: false`
+
+Navigate to `http://localhost:1313` to see your site "in action". 
